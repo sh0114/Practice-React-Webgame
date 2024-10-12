@@ -1,0 +1,67 @@
+<html></html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>구구단</title>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+<script type="text/babel">
+      'use strict';
+
+    const GuGuDan = () => {
+
+        // state마다 각각 분리 하는 것이 좋다.
+        // 컴포넌트안에 선언되어야한다.
+
+        const [first, setFirst] = React.useState(Math.ceil(Math.random() * 9));
+        const [second, setSecond] = React.useState(Math.ceil(Math.random() * 9));
+        const [value, setValue] = React.useState('');
+        const [result, setResult] = React.useState('');
+        const InputRef = React.useRef(null);
+
+        const onChangeInput = (e) => {
+            setValue(e.target.value);
+        }
+
+        const onSubmitForm = (e) => {          
+            e.preventDefault();
+            if(parseInt(value) === first * second){
+                setResult((prevResult)=>{return '정답!' + prevResult.value; });
+                setFirst(Math.ceil(Math.random() * 9));
+                setSecond(Math.ceil(Math.random() * 9));
+                setValue('');
+                InputRef.current.focus;
+            }else{
+                setResult('땡!!!');
+                setValue('');
+                InputRef.current.focus;
+            }
+        }
+
+        return ( // 함수컴포넌트에서도 state랑 ref를 쓰고싶어요 >> react hooks 쓰세요
+            <div>
+                <div>함수컴포넌트 채성히 제작 </div>
+                <div> {first} 곱하기 {second} 는? </div>
+                <form onSubmit={onSubmitForm}>
+                    <input
+                      ref = {InputRef}
+                      type ="number" 
+                      value={value}
+                      onChange={(e) => {setValue(e.target.value);}}/>
+                    <button type="submit" className=""htmlfor=""> 제출하기 </button>
+                </form>
+                <div id="result">{result}</div>
+            </div>
+            // class 는 className 으로 for은 htmlfor로 작성해야함
+        );
+    }
+</script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.querySelector('#root')).render(<GuGuDan/>);
+</script>
+</body>
+</html>
