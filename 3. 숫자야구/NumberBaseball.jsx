@@ -1,11 +1,11 @@
 // import React, { useState, useRef } from "react";
 const React = require("react");
-const { useState, useRef } = React;
+const { useState, useRef, createRef } = React;
 const Try = require("./Try");
 const Fruit = require("./fruit");
 // import React from 'react';
 // exports되는게 객체나 배열이면 구조분해 가능
-//
+// createRef로 useRef 처럼 쓸 수 있다.
 
 function getNumbers() {
   // 숫자 4개를 겹치지 않게 랜덤하게 뽑는 함수!
@@ -27,6 +27,8 @@ const NumberBaseball = () => {
   // 함수가 항상 실행될 필요가 없는데도 실행이 되므로, 비효율적
   // getNumbers ()호출안함 -> 처음 실행 후에는 렌더링 되어도 호출을 안해서 실행 되지 않음
   const [tries, setTries] = useState([]);
+  // const InputRef = useRef(null);
+  // const InputRef = createRef();
   const InputRef = useRef(null);
 
   const onSubmitForm = (e) => {
