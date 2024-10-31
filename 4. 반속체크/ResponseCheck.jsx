@@ -8,7 +8,7 @@ const ResponseCheck = () => {
   const [message, setMessage] = useState("클릭해서 시작하세요");
   const [result, setResult] = useState([]);
 
-  const timeout = useRef(null);
+  const timeout = useRef(null); // 렌더링이 되면 안되는 친구들
   const startTime = useRef(null);
   const endTime = useRef(null);
 
@@ -19,7 +19,7 @@ const ResponseCheck = () => {
         setColorState("now");
         setMessage("지금!");
         startTime.current = new Date();
-      }, Math.floor(Math.random() * 1000) * 2000);
+      }, Math.floor(Math.random() * 1000) + 2000);
       setColorState("ready");
       setMessage("초록이 되면 클릭해!");
     } else if (colorState === "ready") {
@@ -33,29 +33,38 @@ const ResponseCheck = () => {
       setColorState("waiting");
       setMessage("클릭해서 시작하세요");
       setResult((prev) => {
-        [...prev, endTime.current, startTime.current];
+        return [...prev, endTime.current - startTime.current];
       });
     }
   };
+
+  const onClickButton = () => {
+    setResult([]);
+  };
+
+  const renderAverage = () => {
+    /*삼항연산자를 사용하여 보여줄지 말지 결정
+     * 현재 빈배열이라 reduce를 사용할 수 없으므로 0일때는 null(빈태그)로 실행되지 않도록함
+     * false, undefined, null은 jsx에서 태그없음을 의미한다.
+     */
+    return result.length === 0 ? null : (
+      <>
+        <div>
+          평균시간 :{result.reduce((a, c) => a + c) / result.length}
+          ms
+        </div>
+        <button onClick={onClickButton}>리셋버튼</button>
+      </>
+    );
+  };
+
   return (
     <>
       <h1>반응속도 체크 게임에 오신걸 환영합니다.</h1>
       <div id="screen" className={colorState} onClick={onClickScreen}>
         {message}
       </div>
-      {/*삼항연산자를 사용하여 보여줄지 말지 결정
-       * 현재 빈배열이라 reduce를 사용할 수 없으므로 0일때는 null(빈태그)로 실행되지 않도록함
-       * false, undefined, null은 jsx에서 태그없음을 의미한다.
-       */}
-      {result.length === 0 ? null : (
-        <div>
-          평균시간 :
-          {result.reduce((a, c) => {
-            a + c;
-          }) / result.length}
-          ms
-        </div>
-      )}
+      {renderAverage()}
     </>
   ); // render에서는 for과 if (반복문과 조건문을 사용 못함 ㅠㅠ)
 };
