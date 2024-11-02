@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import Ball from "./Ball";
 
 function getWinNumbers() {
@@ -18,40 +24,57 @@ function getWinNumbers() {
 }
 
 const Lotto = () => {
-  const [winNumbers, setWinNumbers] = useState(getWinNumbers());
+  const lottoNumbers = useMemo(() => getWinNumbers(), []);
+  const [winNumbers, setWinNumbers] = useState(lottoNumbers);
   const [winBalls, setWinBalls] = useState([]);
   const [bonus, setBonus] = useState(null);
   const [redo, setRedo] = useState(false);
-  const timeout = useRef([]);
+  const timeouts = useRef([]);
+
+  // useMemo 복잡한 함수의 결과값을 기억해줄때 쓰는 hooks, 이경우는 뽑은 로또번호를 메모함
+  // useRef 일반 값을 기억할때 주로 사용
+  // useCallback 함수 자체를 기억
 
   useEffect(() => {
-    for (let i = 0; winNumbers.length - 1; i++) {
-      timeout.current[i] = setTimeout(() => {
-        setWinBalls((prevWinBalls) => {
-          return [...prevWinBalls, winNumbers[i]];
-        });
+    console.log("useEffect");
+    for (let i = 0; i < winNumbers.length - 1; i++) {
+      timeouts.current[i] = setTimeout(() => {
+        setWinBalls((prevBalls) => [...prevBalls, winNumbers[i]]);
       }, (i + 1) * 1000);
     }
-    setTimeout(() => {
-      setBonus(winBalls[6]);
+    timeouts.current[6] = setTimeout(() => {
+      setBonus(winNumbers[6]);
       setRedo(true);
     }, 7000);
-  }, []);
+    return () => {
+      timeouts.current.forEach((v) => {
+        clearTimeout(v);
+      });
+    };
+  }, [timeouts.current]);
+  // 빈 배열이면 componentDidMount와 동일
+  // 배열에 요소가 있으면 componentDidMount랑 componentDidUpdate 둘 다 수행
 
-  const onClickRedo = () => {
+  useEffect(() => {
+    console.log("당첨숫자를 생성합니다.");
+  }, [winNumbers]);
+
+  const onClickRedo = useCallback(() => {
+    // 자식컴포넌트에서는 useCallback 필수, 부모로부터 전달받은 함수가 사실 같은거라는 것을 인지하게 해줌
     console.log("onClickRedo");
+    console.log(winNumbers);
     setWinNumbers(getWinNumbers());
     setWinBalls([]);
     setBonus(null);
     setRedo(false);
-    timeout.current = [];
-  };
+    timeouts.current = []; // current에 직접적으로 넣어주는거라 바뀜
+  }, [winNumbers]);
 
   return (
     <>
       <h1>로또추첨기</h1>
       <div>당첨 숫자</div>
-      <div id="resultWindow">
+      <div id="결과창">
         {winBalls.map((v) => (
           <Ball key={v} number={v} />
         ))}
