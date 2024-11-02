@@ -1,6 +1,6 @@
 // import React, { useState, useRef } from "react";
 const React = require("react");
-const { useState, useRef, createRef } = React;
+const { useState, useRef, createRef, useNavigate } = React;
 const Try = require("./Try");
 const Fruit = require("./fruit");
 // import React from 'react';
