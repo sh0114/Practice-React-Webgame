@@ -31,9 +31,26 @@ const Lotto = () => {
   const [redo, setRedo] = useState(false);
   const timeouts = useRef([]);
 
-  // useMemo 복잡한 함수의 결과값을 기억해줄때 쓰는 hooks, 이경우는 뽑은 로또번호를 메모함
+  // useMemo 복잡한 함수의 결과값을 기억해줄때 쓰는 hooks, 이경우는 뽑은 로또번호를 메모함, 배열에있는 값이 바뀌기전까지 기억
   // useRef 일반 값을 기억할때 주로 사용
-  // useCallback 함수 자체를 기억
+  // useEffect는 배열에 있는 값이 바뀔때 함수를 실행한다
+  // useCallback 함수 자체를 기억, 배열에있는 값이 바뀌기전까지 기억
+
+  /* hooks는 순서가 매우 중요!
+   * 조건문안에는 절대 넣으면안됨!
+   * 함수나 반복문안에도 hooks 넣는 것은 비추천
+   * 예를 들어 useEffect useState안에 쓰면안된다
+   * -->> hooks들은 최상위로 빼서 실행순서가 같게끔만들어주는 것이 중요함
+   */
+
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+    } else {
+      //ajax 실행
+    }
+  }, [winBalls]); // ComponentDidUpdate만 하고 싶을때, componentDidMount는 실행안하고싶을때 패턴처럼사용
 
   useEffect(() => {
     console.log("useEffect");
