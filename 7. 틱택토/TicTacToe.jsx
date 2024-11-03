@@ -10,18 +10,25 @@ import Table from "./table";
 
 const intialState = {
   winner: "",
-  turn: "0",
+  turn: "O",
   tableData: [
     ["", "", ""],
     ["", "", ""],
     ["", "", ""],
   ],
+  recentCell: [-1, -1],
 };
+
+const SET_WINNER = "SET_WINNER";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "SET_WINNER":
+    case SET_WINNER: {
+      // state.winner = action.winner 이렇게 직접 바꾸면 안됨, 새로운 객체를 만들어서 바뀐 값만 바꾸어준다.
       return { ...state, winner: action.winner };
+    }
+    default:
+      return state;
   }
 };
 
@@ -42,13 +49,16 @@ const TicTacToe = () => {
 
   //컴포넌트에 넣는 함수들은 useCallback을 쓴다.
   const onClickTable = useCallback(() => {
-    dispatch({ type: "SET_WINNER", winner: "0" }); // action을 dispatch함, dispatch할때마다 reducer 실행
+    console.log("onClickTable");
+    dispatch({ type: SET_WINNER, winner: "O" });
+    // action을 dispatch함, dispatch할때마다 reducer 실행
+    // action을 해석해서 state를 바꿔주는게 reducer
   }, []);
 
   return (
     <>
       <h1>TicTacToe 게임에 오신걸 환영합니다.</h1>
-      <Table />
+      <Table onClick={onClickTable} tableData={state.tableData} />
       {state.winner && <div>{state.winner} 님의 승리</div>}
     </>
   );
